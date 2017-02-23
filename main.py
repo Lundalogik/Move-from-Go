@@ -66,9 +66,14 @@ def create_csv_headers(main_node):
     return sorted(list(csv_headers))
 
 
-def parse_object_to_csv_row(headers, node):
+def parse_object_to_csv_row(headers, node, row_filters):
     row = []
+
     for key in headers:
+        for filter_key, filter_value in row_filters:
+            if filter_key == key:
+                if node.get(key) == filter_value:
+                    return None
         # Key has subkeys
         if csv_header_sub_key_separator in key:
             if node.get(key.split(csv_header_sub_key_separator)[0], None):
@@ -105,13 +110,13 @@ def parse_object_to_csv_row(headers, node):
         row.append(value)
     return row
 
-def create_and_fill_csv_file(name, node):
+def create_and_fill_csv_file(name, node, row_filters={}):
      with codecs.open(name+'.csv', 'w', 'utf-8') as f:
         writer = csv.writer(f)
         csv_headers_sorted = create_csv_headers(node)
         writer.writerow(csv_headers_sorted)
         for org in node:
-            row = parse_object_to_csv_row(csv_headers_sorted, org)
+            row = parse_object_to_csv_row(csv_headers_sorted, org, row_filters)
             writer.writerow(row)
 
 
@@ -121,7 +126,11 @@ def create_import_files_from_xml():
 
     create_and_fill_csv_file('organizations', go_data['GoImport']['Organizations']['Organization'])
     create_and_fill_csv_file('deals', go_data['GoImport']['Deals']['Deal'])
-    create_and_fill_csv_file('histories', go_data['GoImport']['Histories']['History'])
+    create_and_fill_csv_file(
+        'histories',
+        go_data['GoImport']['Histories']['History'],
+        row_filters=[{'Classification':'TargetStatus'}, {'Classification':'DealStatus'}]
+    )
     create_and_fill_csv_file('coworkers', go_data['GoImport']['Coworkers']['Coworker'])
 
     employees = []
