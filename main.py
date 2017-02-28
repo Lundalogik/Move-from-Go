@@ -44,8 +44,8 @@ def map_import():
             for key, mapping in mappings:
                 if mapping:
                     field_mapping = SimpleFieldMapping(field=l_type.fields[key],
-                                                    column=mapping,
-                                                    key=False)
+                                                       column=mapping,
+                                                       key=False)
                     config.add_mapping(field_mapping)
 
 
@@ -55,6 +55,8 @@ def create_csv_headers(main_node):
     for node in main_node:
         for key, value in node.items():
             if key == 'CustomValues':
+                if value:
+                    print('hepp')
                 csv_headers.add(key)
             elif key == 'Employees':
                 pass
@@ -65,15 +67,20 @@ def create_csv_headers(main_node):
                     csv_headers.add(key + csv_header_sub_key_separator + sub_key)
     return sorted(list(csv_headers))
 
+class RowFilter:
+    def __init__(self, key, value):
+        self.key = key
+        self.value = value
 
-def parse_object_to_csv_row(headers, node, row_filters):
+def parse_object_to_csv_row(headers, node, custom_fields, row_filters):
     row = []
 
     for key in headers:
-        for filter_key, filter_value in row_filters:
-            if filter_key == key:
-                if node.get(key) == filter_value:
-                    return None
+        if row_filters:
+            for row_filter in row_filters:
+                if row_filter.key == key:
+                    if node.get(key) == row_filter.value:
+                        return None
         # Key has subkeys
         if csv_header_sub_key_separator in key:
             if node.get(key.split(csv_header_sub_key_separator)[0], None):
@@ -110,28 +117,70 @@ def parse_object_to_csv_row(headers, node, row_filters):
         row.append(value)
     return row
 
-def create_and_fill_csv_file(name, node, row_filters={}):
-     with codecs.open(name+'.csv', 'w', 'utf-8') as f:
+def create_and_fill_csv_file(name, node, custom_fields, row_filters=None):
+    with codecs.open('./data/' + name +'.csv', 'w', 'utf-8') as f:
         writer = csv.writer(f)
         csv_headers_sorted = create_csv_headers(node)
         writer.writerow(csv_headers_sorted)
         for org in node:
-            row = parse_object_to_csv_row(csv_headers_sorted, org, row_filters)
-            writer.writerow(row)
+            row = parse_object_to_csv_row(csv_headers_sorted, org, custom_fields, row_filters)
+            if row:
+                writer.writerow(row)
 
 
 def create_import_files_from_xml():
-    with codecs.open('./ExportApplicationData.xml', 'r', 'utf-8') as go_xml:
+    with codecs.open('./data/ExportApplicationData.xml', 'r', 'utf-8') as go_xml:
         go_data = xmltodict.parse(go_xml.read(), encoding='utf-8')
 
-    create_and_fill_csv_file('organizations', go_data['GoImport']['Organizations']['Organization'])
-    create_and_fill_csv_file('deals', go_data['GoImport']['Deals']['Deal'])
+    create_and_fill_csv_file(
+        'organizations',
+        go_data['GoImport']['Organizations']['Organization'],
+        custom_fields=go_data['GoImport']['Settings']['Organization']['CustomFields']
+    )
+    create_and_fill_csv_file(
+        'deals',
+        go_data['GoImport']['Deals']['Deal'],
+        custom_fields=go_data['GoImport']['Settings']['Deals']['CustomFields']
+    )
     create_and_fill_csv_file(
         'histories',
         go_data['GoImport']['Histories']['History'],
-        row_filters=[{'Classification':'TargetStatus'}, {'Classification':'DealStatus'}]
+        custom_fields=go_data['GoImport']['Settings']['Histories']['CustomFields'],
+        row_filters=[
+            RowFilter('Classification', 'TargetStatus'),
+            RowFilter('Classification', 'DealStatus')]
     )
-    create_and_fill_csv_file('coworkers', go_data['GoImport']['Coworkers']['Coworker'])
+    create_and_fill_csv_file(
+        'deal_statuses',
+        go_data['GoImport']['Histories']['History'],
+        custom_fields=go_data['GoImport']['Settings']['Histories']['CustomFields'],
+        row_filters=[
+            RowFilter('Classification', 'TargetStatus'),
+            RowFilter('Classification', 'TriedToReach'),
+            RowFilter('Classification', 'SalesCall'),
+            RowFilter('Classification', 'ClientVisit'),
+            RowFilter('Classification', 'Comment'),
+            RowFilter('Classification', 'TalkedTo')
+        ]
+    )
+    create_and_fill_csv_file(
+        'target_statuses',
+        go_data['GoImport']['Histories']['History'],
+        custom_fields=go_data['GoImport']['Settings']['Histories']['CustomFields'],
+        row_filters=[
+            RowFilter('Classification', 'DealStatus'),
+            RowFilter('Classification', 'TriedToReach'),
+            RowFilter('Classification', 'SalesCall'),
+            RowFilter('Classification', 'ClientVisit'),
+            RowFilter('Classification', 'Comment'),
+            RowFilter('Classification', 'TalkedTo')
+        ]
+    )
+    create_and_fill_csv_file(
+        'coworkers',
+        go_data['GoImport']['Coworkers']['Coworker'],
+        custom_fields=go_data['GoImport']['Settings']['Coworkers']['CustomFields']
+    )
 
     employees = []
     for org in go_data['GoImport']['Organizations']['Organization']:
@@ -147,7 +196,11 @@ def create_import_files_from_xml():
                 persons.update({'Organization.Id': org.get('Id')})
                 persons.update({'Organization.Name': org.get('Name')})
                 employees.append(persons)
-    create_and_fill_csv_file('employees', employees)
+    create_and_fill_csv_file(
+        'employees', 
+        employees,
+        custom_fields=go_data['GoImport']['Settings']['Coworkers']['CustomFields']
+    )
 
 create_import_files_from_xml()
 #create_mapping_file('company', 'person')

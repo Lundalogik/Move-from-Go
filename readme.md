@@ -25,3 +25,4 @@ Tags are put into a column and separated by semicolon
 - A basic mapping file
 - A cooler mapping file with simple transforms and base values
 - A CLI-interface, similair to the one in Move-to-go
+- Tests...
