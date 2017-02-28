@@ -49,15 +49,23 @@ def map_import():
                     config.add_mapping(field_mapping)
 
 
-def create_csv_headers(main_node):
+def create_csv_headers(main_node, custom_fields):
     csv_headers = set()
     #print(main_node)
     for node in main_node:
         for key, value in node.items():
             if key == 'CustomValues':
                 if value:
-                    print('hepp')
-                csv_headers.add(key)
+                    # There can be several CustomValues on a object. Due to XML conversion it is not always a list
+                    if isinstance(value['CustomValue'], list):
+                        custom_values = []
+                        custom_values.extend(value['CustomValue'])
+                    else:
+                        custom_values = [value['CustomValue']]
+                    for custom_value in custom_values:
+                        field_id = custom_value['Field']['Id']
+                        custom_field_name = [custom_field['Title'] for custom_field in custom_fields['CustomField'] if custom_field['Id'] == field_id][0]
+                        csv_headers.add(key + csv_header_sub_key_separator + custom_field_name)
             elif key == 'Employees':
                 pass
             elif isinstance(value, str):
@@ -83,7 +91,31 @@ def parse_object_to_csv_row(headers, node, custom_fields, row_filters):
                         return None
         # Key has subkeys
         if csv_header_sub_key_separator in key:
-            if node.get(key.split(csv_header_sub_key_separator)[0], None):
+            
+            # Handle custom values
+            if key.split(csv_header_sub_key_separator)[0] == "CustomValues" and node.get('CustomValues'):
+                # Might be list or not, make sure it always is.
+                if isinstance(node.get('CustomValues').get('CustomValue'), list):
+                    custom_values = []
+                    custom_values.extend(node.get('CustomValues').get('CustomValue'))
+                else:
+                    custom_values = [node.get('CustomValues').get('CustomValue')]
+                # Make a look up for the ID of the CustomField based on the Name of the Field.
+                # Can then be used to extract the value of the correct CustomValue
+                custom_field_name = key.split(csv_header_sub_key_separator)[1]
+                custom_field_id = [custom_field['Id']
+                                   for custom_field in custom_fields['CustomField']
+                                   if custom_field['Title'] == custom_field_name][0]
+
+                temp_value = [custom_value['Value']
+                              for custom_value in custom_values
+                              if custom_value['Field']['Id'] == custom_field_id]
+                if temp_value:
+                    value = temp_value[0]
+                else:
+                    value = None
+
+            elif node.get(key.split(csv_header_sub_key_separator)[0], None):
                 temp_value = node.get(
                     key.split(csv_header_sub_key_separator)[0]
                 ).get(
@@ -96,6 +128,8 @@ def parse_object_to_csv_row(headers, node, custom_fields, row_filters):
                         value = temp_value.split(":")[1]
                     else:
                         value = temp_value
+                elif key == "Status.StatusReference":
+                    value = temp_value['Label']
                 else:
                     value = temp_value
             else:
@@ -106,6 +140,7 @@ def parse_object_to_csv_row(headers, node, custom_fields, row_filters):
                 if node.get(key):
                     for _, fields in node.get(key).items():
                         if isinstance(fields, OrderedDict):
+                            fields.get['Id']
                             custom_values.append(fields.get('Value'))
                         else:
                             for field in fields:
@@ -117,10 +152,10 @@ def parse_object_to_csv_row(headers, node, custom_fields, row_filters):
         row.append(value)
     return row
 
-def create_and_fill_csv_file(name, node, custom_fields, row_filters=None):
+def create_and_fill_csv_file(name, node, custom_fields=None, row_filters=None):
     with codecs.open('./data/' + name +'.csv', 'w', 'utf-8') as f:
-        writer = csv.writer(f)
-        csv_headers_sorted = create_csv_headers(node)
+        writer = csv.writer(f, quoting=csv.QUOTE_ALL)
+        csv_headers_sorted = create_csv_headers(node, custom_fields)
         writer.writerow(csv_headers_sorted)
         for org in node:
             row = parse_object_to_csv_row(csv_headers_sorted, org, custom_fields, row_filters)
@@ -140,12 +175,11 @@ def create_import_files_from_xml():
     create_and_fill_csv_file(
         'deals',
         go_data['GoImport']['Deals']['Deal'],
-        custom_fields=go_data['GoImport']['Settings']['Deals']['CustomFields']
+        custom_fields=go_data['GoImport']['Settings']['Deal']['CustomFields']
     )
     create_and_fill_csv_file(
         'histories',
         go_data['GoImport']['Histories']['History'],
-        custom_fields=go_data['GoImport']['Settings']['Histories']['CustomFields'],
         row_filters=[
             RowFilter('Classification', 'TargetStatus'),
             RowFilter('Classification', 'DealStatus')]
@@ -153,7 +187,7 @@ def create_import_files_from_xml():
     create_and_fill_csv_file(
         'deal_statuses',
         go_data['GoImport']['Histories']['History'],
-        custom_fields=go_data['GoImport']['Settings']['Histories']['CustomFields'],
+        custom_fields=go_data['GoImport']['Settings']['Deal']['CustomFields'],
         row_filters=[
             RowFilter('Classification', 'TargetStatus'),
             RowFilter('Classification', 'TriedToReach'),
@@ -166,7 +200,6 @@ def create_import_files_from_xml():
     create_and_fill_csv_file(
         'target_statuses',
         go_data['GoImport']['Histories']['History'],
-        custom_fields=go_data['GoImport']['Settings']['Histories']['CustomFields'],
         row_filters=[
             RowFilter('Classification', 'DealStatus'),
             RowFilter('Classification', 'TriedToReach'),
@@ -179,7 +212,14 @@ def create_import_files_from_xml():
     create_and_fill_csv_file(
         'coworkers',
         go_data['GoImport']['Coworkers']['Coworker'],
-        custom_fields=go_data['GoImport']['Settings']['Coworkers']['CustomFields']
+    )
+    create_and_fill_csv_file(
+        'files',
+        go_data['GoImport']['Documents']['Files']['File'],
+    )
+    create_and_fill_csv_file(
+        'links',
+        go_data['GoImport']['Documents']['Links']['Link'],
     )
 
     employees = []
@@ -199,7 +239,7 @@ def create_import_files_from_xml():
     create_and_fill_csv_file(
         'employees', 
         employees,
-        custom_fields=go_data['GoImport']['Settings']['Coworkers']['CustomFields']
+        custom_fields=go_data['GoImport']['Settings']['Person']['CustomFields']
     )
 
 create_import_files_from_xml()
