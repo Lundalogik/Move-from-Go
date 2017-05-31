@@ -17,7 +17,6 @@ Objects such as "Coworker" is flatten into Coworker.id, Coworker.name ...
 Tags are put into a column and separated by semicolon
 
 ## Known problems
-- Custom fields are not working
 - History is mixed of real history and deal and calling list status changes
 
 ## Future features
