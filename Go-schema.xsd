@@ -1,0 +1,391 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" elementFormDefault="qualified" attributeFormDefault="unqualified">
+  <xs:element name="GoImport">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element name="Settings">
+          <xs:complexType>
+            <xs:sequence>
+              <xs:element name="Organization">
+                <xs:complexType>
+                  <xs:sequence>
+                    <xs:element name="CustomFields">
+                      <xs:complexType>
+                        <xs:sequence>
+                          <xs:element name="CustomField">
+                            <xs:complexType>
+                              <xs:sequence>
+                                <xs:element name="Id" type="xs:int"></xs:element>
+                                <xs:element name="IntegrationId"></xs:element>
+                                <xs:element name="Title" type="xs:string"></xs:element>
+                                <xs:element name="Type" type="xs:string"></xs:element>
+                              </xs:sequence>
+                            </xs:complexType>
+                          </xs:element>
+                        </xs:sequence>
+                      </xs:complexType>
+                    </xs:element>
+                  </xs:sequence>
+                </xs:complexType>
+              </xs:element>
+              <xs:element name="Person">
+                <xs:complexType>
+                  <xs:sequence>
+                    <xs:element name="CustomFields"></xs:element>
+                  </xs:sequence>
+                </xs:complexType>
+              </xs:element>
+              <xs:element name="Deal">
+                <xs:complexType>
+                  <xs:sequence>
+                    <xs:element name="CustomFields"></xs:element>
+                    <xs:element name="Statuses">
+                      <xs:complexType>
+                        <xs:sequence>
+                          <xs:element name="DealStatus" maxOccurs="unbounded">
+                            <xs:complexType>
+                              <xs:sequence>
+                                <xs:element name="IntegrationId"></xs:element>
+                                <xs:element name="Label" type="xs:string"></xs:element>
+                                <xs:element name="Assessment" type="xs:int"></xs:element>
+                              </xs:sequence>
+                            </xs:complexType>
+                          </xs:element>
+                        </xs:sequence>
+                      </xs:complexType>
+                    </xs:element>
+                    <xs:element name="DefaultStatus">
+                      <xs:complexType>
+                        <xs:sequence>
+                          <xs:element name="IntegrationId"></xs:element>
+                          <xs:element name="Label" type="xs:string"></xs:element>
+                        </xs:sequence>
+                      </xs:complexType>
+                    </xs:element>
+                  </xs:sequence>
+                </xs:complexType>
+              </xs:element>
+            </xs:sequence>
+          </xs:complexType>
+        </xs:element>
+        <xs:element name="Coworkers">
+          <xs:complexType>
+            <xs:sequence>
+              <xs:element name="Coworker" maxOccurs="unbounded">
+                <xs:complexType>
+                  <xs:sequence>
+                    <xs:element name="Id" type="xs:int"></xs:element>
+                    <xs:element name="IntegrationId"></xs:element>
+                    <xs:element name="Email" type="xs:string"></xs:element>
+                    <xs:element name="FirstName" type="xs:string"></xs:element>
+                    <xs:element name="LastName" type="xs:string"></xs:element>
+                    <xs:element name="DirectPhoneNumber"></xs:element>
+                    <xs:element name="MobilePhoneNumber"></xs:element>
+                    <xs:element name="HomePhoneNumber"></xs:element>
+                  </xs:sequence>
+                </xs:complexType>
+              </xs:element>
+            </xs:sequence>
+          </xs:complexType>
+        </xs:element>
+        <xs:element name="Organizations">
+          <xs:complexType>
+            <xs:sequence>
+              <xs:element name="Organization" maxOccurs="unbounded">
+                <xs:complexType>
+                  <xs:sequence>
+                    <xs:element name="Id" type="xs:int"></xs:element>
+                    <xs:element name="IntegrationId"></xs:element>
+                    <xs:element name="Source">
+                      <xs:complexType>
+                        <xs:sequence>
+                          <xs:element name="Name" type="xs:string"></xs:element>
+                          <xs:element name="Format" type="xs:string"></xs:element>
+                          <xs:element name="Id" type="xs:string"></xs:element>
+                        </xs:sequence>
+                      </xs:complexType>
+                    </xs:element>
+                    <xs:element name="Name" type="xs:string"></xs:element>
+                    <xs:element name="OrganizationNumber" type="xs:string"></xs:element>
+                    <xs:element name="PostalAddress">
+                      <xs:complexType>
+                        <xs:sequence>
+                          <xs:element name="Street"></xs:element>
+                          <xs:element name="ZipCode"></xs:element>
+                          <xs:element name="City"></xs:element>
+                          <xs:element name="CountryCode"></xs:element>
+                        </xs:sequence>
+                      </xs:complexType>
+                    </xs:element>
+                    <xs:element name="VisitAddress">
+                      <xs:complexType>
+                        <xs:sequence>
+                          <xs:element name="Street"></xs:element>
+                          <xs:element name="ZipCode"></xs:element>
+                          <xs:element name="City"></xs:element>
+                          <xs:element name="CountryCode"></xs:element>
+                        </xs:sequence>
+                      </xs:complexType>
+                    </xs:element>
+                    <xs:element name="CentralPhoneNumber"></xs:element>
+                    <xs:element name="FaxPhoneNumber"></xs:element>
+                    <xs:element name="MobilePhoneNumber"></xs:element>
+                    <xs:element name="Email"></xs:element>
+                    <xs:element name="WebSite"></xs:element>
+                    <xs:element name="Employees"></xs:element>
+                    <xs:element name="CustomValues"></xs:element>
+                    <xs:element name="Tags"></xs:element>
+                    <xs:element name="Relation" type="xs:string"></xs:element>
+                    <xs:element name="RelationLastModified"></xs:element>
+                  </xs:sequence>
+                </xs:complexType>
+              </xs:element>
+            </xs:sequence>
+          </xs:complexType>
+        </xs:element>
+        <xs:element name="Deals">
+          <xs:complexType>
+            <xs:sequence>
+              <xs:element name="Deal" maxOccurs="unbounded">
+                <xs:complexType>
+                  <xs:sequence>
+                    <xs:element name="Id" type="xs:int"></xs:element>
+                    <xs:element name="IntegrationId"></xs:element>
+                    <xs:element name="Name" type="xs:string"></xs:element>
+                    <xs:element name="OfferDate"></xs:element>
+                    <xs:element name="OrderDate"></xs:element>
+                    <xs:element name="Customer">
+                      <xs:complexType>
+                        <xs:sequence>
+                          <xs:element name="Id" type="xs:int"></xs:element>
+                          <xs:element name="IntegrationId"></xs:element>
+                          <xs:element name="Heading" type="xs:string"></xs:element>
+                        </xs:sequence>
+                      </xs:complexType>
+                    </xs:element>
+                    <xs:element name="Status">
+                      <xs:complexType>
+                        <xs:sequence>
+                          <xs:element name="StatusReference">
+                            <xs:complexType>
+                              <xs:sequence>
+                                <xs:element name="Label" type="xs:string"></xs:element>
+                              </xs:sequence>
+                            </xs:complexType>
+                          </xs:element>
+                          <xs:element name="Date" type="xs:dateTime"></xs:element>
+                        </xs:sequence>
+                      </xs:complexType>
+                    </xs:element>
+                    <xs:element name="Description"></xs:element>
+                    <xs:element name="Probability" type="xs:int"></xs:element>
+                    <xs:element name="Value" type="xs:int"></xs:element>
+                    <xs:element name="ResponsibleCoworker">
+                      <xs:complexType>
+                        <xs:sequence>
+                          <xs:element name="Id" type="xs:int"></xs:element>
+                          <xs:element name="IntegrationId"></xs:element>
+                          <xs:element name="Heading" type="xs:string"></xs:element>
+                        </xs:sequence>
+                      </xs:complexType>
+                    </xs:element>
+                    <xs:element name="Tags">
+                      <xs:complexType>
+                        <xs:sequence>
+                          <xs:element name="Tag" maxOccurs="unbounded" type="xs:string"></xs:element>
+                        </xs:sequence>
+                      </xs:complexType>
+                    </xs:element>
+                    <xs:element name="CustomValues"></xs:element>
+                  </xs:sequence>
+                </xs:complexType>
+              </xs:element>
+            </xs:sequence>
+          </xs:complexType>
+        </xs:element>
+        <xs:element name="Histories">
+          <xs:complexType>
+            <xs:sequence>
+              <xs:element name="History" maxOccurs="unbounded">
+                <xs:complexType>
+                  <xs:sequence>
+                    <xs:element name="Id" type="xs:int"></xs:element>
+                    <xs:element name="Date" type="xs:string"></xs:element>
+                    <xs:element name="Due"></xs:element>
+                    <xs:element name="Text" type="xs:string"></xs:element>
+                    <xs:element name="Label"></xs:element>
+                    <xs:element name="Classification" type="xs:string"></xs:element>
+                    <xs:element name="Assessment"></xs:element>
+                    <xs:element name="StatusId"></xs:element>
+                    <xs:element name="Origin"></xs:element>
+                    <xs:element name="CreatedBy">
+                      <xs:complexType>
+                        <xs:sequence>
+                          <xs:element name="Id" type="xs:int"></xs:element>
+                          <xs:element name="IntegrationId"></xs:element>
+                          <xs:element name="Heading" type="xs:string"></xs:element>
+                        </xs:sequence>
+                      </xs:complexType>
+                    </xs:element>
+                    <xs:element name="Organization">
+                      <xs:complexType>
+                        <xs:sequence>
+                          <xs:element name="Id" type="xs:int"></xs:element>
+                          <xs:element name="IntegrationId"></xs:element>
+                          <xs:element name="Heading" type="xs:string"></xs:element>
+                        </xs:sequence>
+                      </xs:complexType>
+                    </xs:element>
+                    <xs:element name="Person">
+                      <xs:complexType>
+                        <xs:sequence>
+                          <xs:element name="Id" type="xs:int"></xs:element>
+                          <xs:element name="IntegrationId"></xs:element>
+                          <xs:element name="Heading" type="xs:string"></xs:element>
+                        </xs:sequence>
+                      </xs:complexType>
+                    </xs:element>
+                  </xs:sequence>
+                </xs:complexType>
+              </xs:element>
+            </xs:sequence>
+          </xs:complexType>
+        </xs:element>
+        <xs:element name="Todos">
+          <xs:complexType>
+            <xs:sequence>
+              <xs:element name="Todo" maxOccurs="unbounded">
+                <xs:complexType>
+                  <xs:sequence>
+                    <xs:element name="Id" type="xs:int"></xs:element>
+                    <xs:element name="DateStart" type="xs:string"></xs:element>
+                    <xs:element name="DateStartHasTime" type="xs:string"></xs:element>
+                    <xs:element name="AssignedCoworker">
+                      <xs:complexType>
+                        <xs:sequence>
+                          <xs:element name="Id" type="xs:int"></xs:element>
+                          <xs:element name="IntegrationId"></xs:element>
+                          <xs:element name="Heading" type="xs:string"></xs:element>
+                        </xs:sequence>
+                      </xs:complexType>
+                    </xs:element>
+                    <xs:element name="CreatedBy">
+                      <xs:complexType>
+                        <xs:sequence>
+                          <xs:element name="Id" type="xs:int"></xs:element>
+                          <xs:element name="IntegrationId"></xs:element>
+                          <xs:element name="Heading" type="xs:string"></xs:element>
+                        </xs:sequence>
+                      </xs:complexType>
+                    </xs:element>
+                    <xs:element name="Text" type="xs:string"></xs:element>
+                  </xs:sequence>
+                </xs:complexType>
+              </xs:element>
+            </xs:sequence>
+          </xs:complexType>
+        </xs:element>
+        <xs:element name="Meetings">
+          <xs:complexType>
+            <xs:sequence>
+              <xs:element name="Meeting">
+                <xs:complexType>
+                  <xs:sequence>
+                    <xs:element name="Id" type="xs:int"></xs:element>
+                    <xs:element name="DateStart" type="xs:string"></xs:element>
+                    <xs:element name="DateStartHasTime" type="xs:string"></xs:element>
+                    <xs:element name="AssignedCoworker">
+                      <xs:complexType>
+                        <xs:sequence>
+                          <xs:element name="Id" type="xs:int"></xs:element>
+                          <xs:element name="IntegrationId"></xs:element>
+                          <xs:element name="Heading" type="xs:string"></xs:element>
+                        </xs:sequence>
+                      </xs:complexType>
+                    </xs:element>
+                    <xs:element name="CreatedBy">
+                      <xs:complexType>
+                        <xs:sequence>
+                          <xs:element name="Id" type="xs:int"></xs:element>
+                          <xs:element name="IntegrationId"></xs:element>
+                          <xs:element name="Heading" type="xs:string"></xs:element>
+                        </xs:sequence>
+                      </xs:complexType>
+                    </xs:element>
+                    <xs:element name="Organization">
+                      <xs:complexType>
+                        <xs:sequence>
+                          <xs:element name="Id" type="xs:int"></xs:element>
+                          <xs:element name="IntegrationId"></xs:element>
+                          <xs:element name="Heading" type="xs:string"></xs:element>
+                        </xs:sequence>
+                      </xs:complexType>
+                    </xs:element>
+                    <xs:element name="Person">
+                      <xs:complexType>
+                        <xs:sequence>
+                          <xs:element name="Id" type="xs:int"></xs:element>
+                          <xs:element name="IntegrationId"></xs:element>
+                          <xs:element name="Heading" type="xs:string"></xs:element>
+                        </xs:sequence>
+                      </xs:complexType>
+                    </xs:element>
+                    <xs:element name="Heading" type="xs:string"></xs:element>
+                    <xs:element name="Text"></xs:element>
+                    <xs:element name="DateStop" type="xs:string"></xs:element>
+                    <xs:element name="Location" type="xs:string"></xs:element>
+                  </xs:sequence>
+                </xs:complexType>
+              </xs:element>
+            </xs:sequence>
+          </xs:complexType>
+        </xs:element>
+        <xs:element name="Documents">
+          <xs:complexType>
+            <xs:sequence>
+              <xs:element name="Links"></xs:element>
+              <xs:element name="Files">
+                <xs:complexType>
+                  <xs:sequence>
+                    <xs:element name="File" maxOccurs="unbounded">
+                      <xs:complexType>
+                        <xs:sequence>
+                          <xs:element name="Id" type="xs:int"></xs:element>
+                          <xs:element name="IntegrationId"></xs:element>
+                          <xs:element name="Name" type="xs:string"></xs:element>
+                          <xs:element name="Description" type="xs:string"></xs:element>
+                          <xs:element name="LocationInZipFile" type="xs:string"></xs:element>
+                          <xs:element name="CreatedBy">
+                            <xs:complexType>
+                              <xs:sequence>
+                                <xs:element name="Id" type="xs:int"></xs:element>
+                                <xs:element name="IntegrationId"></xs:element>
+                                <xs:element name="Heading" type="xs:string"></xs:element>
+                              </xs:sequence>
+                            </xs:complexType>
+                          </xs:element>
+                          <xs:element name="Organization">
+                            <xs:complexType>
+                              <xs:sequence>
+                                <xs:element name="Id" type="xs:int"></xs:element>
+                                <xs:element name="IntegrationId"></xs:element>
+                                <xs:element name="Heading" type="xs:string"></xs:element>
+                              </xs:sequence>
+                            </xs:complexType>
+                          </xs:element>
+                        </xs:sequence>
+                      </xs:complexType>
+                    </xs:element>
+                  </xs:sequence>
+                </xs:complexType>
+              </xs:element>
+            </xs:sequence>
+          </xs:complexType>
+        </xs:element>
+      </xs:sequence>
+      <xs:attribute name="xmlns:xsd" type="xs:string"></xs:attribute>
+      <xs:attribute name="xmlns:xsi" type="xs:string"></xs:attribute>
+      <xs:attribute name="Version" type="xs:string"></xs:attribute>
+    </xs:complexType>
+  </xs:element>
+</xs:schema>
